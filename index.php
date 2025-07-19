@@ -57,7 +57,19 @@ tailwind.config = {
 /* ------------  КАСТОМНЫЙ КУРСОР ------------- */
 #dot,#ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 70; border-radius: 50%; }
 #dot  { width: 8px; height: 8px; background:#fff; mix-blend-mode:difference; }
-#ring { width:32px; height:32px; border:2px solid #fff; mix-blend-mode:difference; transition:.15s; }
+#ring { width:32px; height:32px; border:2px solid #fff; mix-blend-mode:difference; transition:none; }
+
+/* ------------  FLOATING SHAPES ------------- */
+.floating-shapes{pointer-events:none;}
+.floating-shapes div{
+  position:absolute; border-radius:50%; width:80px; height:80px;
+  background:radial-gradient(circle,var(--accent),transparent 70%);
+  opacity:.25; animation:float 6s ease-in-out infinite;
+}
+.floating-shapes .s1{top:20%; left:10%; animation-duration:7s;}
+.floating-shapes .s2{top:50%; right:15%; animation-duration:8s;}
+.floating-shapes .s3{bottom:10%; left:40%; animation-duration:5s;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
 
 /* ------------  TIMELINE EXPERIENCE --------- */
 .timeline::before {
@@ -91,12 +103,18 @@ tailwind.config = {
 :root{ --glass:rgba(255,255,255,.12); }
 /* ------------  WAVES & TOP BUTTON ------------- */
 .wave svg{display:block;width:100%;height:80px;}
-#topBtn{display:none;}
-#topBtn.show{display:block;}
+#topBtn{display:none; opacity:0; transform:translateY(20px); transition:opacity .3s,transform .3s;}
+#topBtn.show{display:block; opacity:1; transform:translateY(0);}
+#magBtn::after{
+  content:''; position:absolute; inset:-4px; border-radius:inherit;
+  background:radial-gradient(circle,rgba(255,255,255,.6),transparent 60%);
+  opacity:0; transition:opacity .3s;
+}
+#magBtn:hover::after{opacity:1;}
 </style>
 </head>
 
-<body class="bg-slate-50 text-slate-800 dark:bg-dark dark:text-slate-200 transition-colors selection:bg-accent/30">
+<body class="bg-gradient-to-br from-slate-50 to-white text-slate-800 dark:bg-gradient-to-br dark:from-dark dark:to-slate-900 dark:text-slate-200 transition-colors selection:bg-accent/30">
 
 <div id="dot"></div><div id="ring"></div>
 <button id="topBtn" class="fixed bottom-6 right-6 p-3 bg-accent text-white rounded-full shadow-lg hidden"><i class="fa fa-arrow-up"></i></button>
@@ -125,8 +143,14 @@ tailwind.config = {
   <div class="w-[60vw] h-[60vw] bg-accent opacity-40 rounded-full blur-3xl animate-blob"></div>
   <div class="w-[40vw] h-[40vw] bg-primary opacity-40 rounded-full blur-3xl animate-blob mix-blend-multiply"></div>
  </div>
- <!-- noise overlay -->
- <div class="absolute inset-0 -z-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+  <!-- noise overlay -->
+  <div class="absolute inset-0 -z-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+  <!-- floating shapes -->
+  <div class="floating-shapes absolute inset-0 -z-10">
+    <div class="s1"></div>
+    <div class="s2"></div>
+    <div class="s3"></div>
+  </div>
 
  <div class="text-center px-4">
   <!-- KPI COUNTERS -->
@@ -162,7 +186,7 @@ tailwind.config = {
 </div>
 
 <!-- =============  ABOUT  ============= -->
-<section id="about" class="py-24">
+<section id="about" class="py-24" data-aos="fade-up">
  <div class="max-w-screen-xl mx-auto grid md:grid-cols-2 gap-16 items-center px-4">
   <div class="mx-auto w-56 h-56 rounded-full overflow-hidden shadow-2xl ring-4 ring-accent/40" data-aos="zoom-in">
    <img src="profile.jpg" alt="Фото" class="object-cover w-full h-full">
@@ -188,7 +212,7 @@ tailwind.config = {
 </section>
 
 <!-- =============  EXPERIENCE (TIMELINE)  ============= -->
-<section id="experience" class="py-24 bg-slate-100 dark:bg-slate-800">
+<section id="experience" class="py-24 bg-slate-100 dark:bg-slate-800" data-aos="fade-up">
  <div class="max-w-screen-xl mx-auto px-4">
   <h3 class="text-3xl font-bold mb-12 text-center" data-aos="fade-up">Опыт работы — 3 года 1 месяц</h3>
 
@@ -231,7 +255,7 @@ tailwind.config = {
 </section>
 
 <!-- =============  EDUCATION  ============= -->
-<section id="education" class="py-24">
+<section id="education" class="py-24" data-aos="fade-up">
  <div class="max-w-screen-xl mx-auto px-4">
   <h3 class="text-3xl font-bold mb-12 text-center" data-aos="fade-up">Образование и повышение квалификации</h3>
 
@@ -279,7 +303,7 @@ tailwind.config = {
 </section>
 
 <!-- =============  SKILLS  ============= -->
-<section id="skills" class="py-24 bg-slate-100 dark:bg-slate-800">
+<section id="skills" class="py-24 bg-slate-100 dark:bg-slate-800" data-aos="fade-up">
  <div class="max-w-screen-xl mx-auto px-4">
   <h3 class="text-3xl font-bold mb-12 text-center" data-aos="fade-up">Навыки и компетенции</h3>
 
@@ -315,7 +339,7 @@ tailwind.config = {
 </section>
 
 <!-- =============  AWARDS & PROJECTS  ============= -->
-<section id="awards" class="py-24">
+<section id="awards" class="py-24" data-aos="fade-up">
  <div class="max-w-screen-xl mx-auto px-4">
   <h3 class="text-3xl font-bold mb-12 text-center" data-aos="fade-up">Достижения и проекты</h3>
   <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -419,11 +443,15 @@ document.addEventListener('DOMContentLoaded',()=>{
    localStorage.theme = root.classList.contains('dark') ? 'dark' : 'light'; };
 
  /* ----------  Custom cursor  ---------- */
- const d=document.getElementById('dot'), r=document.getElementById('ring');
- window.addEventListener('mousemove',e=>{
-   d.style.transform=`translate(${e.clientX}px,${e.clientY}px)`;
-   r.style.transform=`translate(${e.clientX-16}px,${e.clientY-16}px)`;
- });
+  const d=document.getElementById('dot'), r=document.getElementById('ring');
+  let cx=0, cy=0;
+  window.addEventListener('mousemove',e=>{ cx=e.clientX; cy=e.clientY; });
+  function move(){
+    d.style.transform=`translate(${cx}px,${cy}px)`;
+    r.style.transform=`translate(${cx-16}px,${cy-16}px)`;
+    requestAnimationFrame(move);
+  }
+  move();
 
  /* ----------  Magnetic button (hero CTA)  ---------- */
  const m=document.getElementById('magBtn');
