@@ -46,6 +46,7 @@ tailwind.config = {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.1.0/typed.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.3/vanilla-tilt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis/bundled/lenis.min.js"></script>
 
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
@@ -88,12 +89,17 @@ tailwind.config = {
 
 /* ------------  ПЕРЕМЕННАЯ ДЛЯ GLASS ------------- */
 :root{ --glass:rgba(255,255,255,.12); }
+/* ------------  WAVES & TOP BUTTON ------------- */
+.wave svg{display:block;width:100%;height:80px;}
+#topBtn{display:none;}
+#topBtn.show{display:block;}
 </style>
 </head>
 
 <body class="bg-slate-50 text-slate-800 dark:bg-dark dark:text-slate-200 transition-colors selection:bg-accent/30">
 
 <div id="dot"></div><div id="ring"></div>
+<button id="topBtn" class="fixed bottom-6 right-6 p-3 bg-accent text-white rounded-full shadow-lg hidden"><i class="fa fa-arrow-up"></i></button>
 
 <!-- =============  NAVIGATION  ============= -->
 <nav id="navbar" class="fixed inset-x-0 top-0 z-50 bg-white/70 dark:bg-dark/70 backdrop-blur shadow-sm">
@@ -149,6 +155,11 @@ tailwind.config = {
   </a>
  </div>
 </header>
+<div class="wave text-slate-50 dark:text-dark -mt-px">
+  <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+    <path d="M0 32 C 360 80 1080 -16 1440 32 L1440 80 H0 Z" fill="currentColor"/>
+  </svg>
+</div>
 
 <!-- =============  ABOUT  ============= -->
 <section id="about" class="py-24">
@@ -326,8 +337,20 @@ tailwind.config = {
     </div>
    <?php endforeach;?>
   </div>
- </div>
+</div>
 </section>
+
+<div class="wave -mb-px">
+  <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="waveGrad" x1="0" x2="1440" y1="0" y2="0" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#2563eb"/>
+        <stop offset="1" stop-color="#7c3aed"/>
+      </linearGradient>
+    </defs>
+    <path d="M0 48 C 480 0 960 96 1440 48 L1440 80 H0 Z" fill="url(#waveGrad)"/>
+  </svg>
+</div>
 
 <!-- =============  CONTACT  ============= -->
 <section id="contact" class="relative py-32 bg-gradient-to-br from-primary to-accent text-white text-center">
@@ -378,10 +401,15 @@ document.addEventListener('DOMContentLoaded',()=>{
  AOS.init({ duration:800, once:true });
 
  /* ----------  Typed.js  ---------- */
- new Typed('#typed', {
-   strings:['Digital Transformer','Product Manager','Стратег-аналитик'],
-   typeSpeed:60, backSpeed:30, loop:true
- });
+  new Typed('#typed', {
+    strings:['Digital Transformer','Product Manager','Стратег-аналитик'],
+    typeSpeed:60, backSpeed:30, loop:true
+  });
+
+  /* ----------  Lenis smooth scroll  ---------- */
+  const lenis = new Lenis({ smooth:true });
+  function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
 
  /* ----------  Dark mode toggle  ---------- */
  const root=document.documentElement, btn=document.getElementById('themeBtn');
@@ -483,8 +511,15 @@ document.addEventListener('DOMContentLoaded',()=>{
            a.getAttribute('href')===`#${sec.id}` && self.isActive);
        });
      }
-   });
- });
+  });
+});
+
+  /* ----------  Back to top button  ---------- */
+  const topBtn=document.getElementById('topBtn');
+  lenis.on('scroll',({scroll})=>{
+    topBtn.classList.toggle('show',scroll>window.innerHeight);
+  });
+  topBtn.onclick=()=>lenis.scrollTo(0);
 
  /* ----------  Feedback modal  ---------- */
  const modal=document.getElementById('recModal');
